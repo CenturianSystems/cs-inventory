@@ -38,10 +38,10 @@ app.get('/', (req, res) => {
     })
 })
 
-require('./app/routes/product.route.js')(app)
-require('./app/routes/sale.route.js')(app)
-require('./app/routes/purchase.route.js')(app)
-require('./app/routes/user.js')(app)
+require('./routes/product.route.js')(app)
+require('./routes/sale.route.js')(app)
+require('./routes/purchase.route.js')(app)
+require('./routes/user.js')(app)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.get("*", (req, res) => {
