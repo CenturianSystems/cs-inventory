@@ -2,9 +2,9 @@
   "name": "centurian-systems-inventory",
   "version": "1.0.0",
   "description": "A simple inventory management system for internal use.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "dev-server": "nodemon index.js",
+    "dev-server": "nodemon server.js",
     "client-install": "npm install --prefix client",
     "start": "node server.js",
     "server": "nodemon server.js",
