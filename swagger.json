@@ -1,0 +1,174 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "version": "1.0.0",
+        "title": "Centurian Systems Inventory",
+        "description": "Product Inventory for Centurian Systems",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [{
+        "name": "Products",
+        "description": "API for Products in System Inventory."
+    }],
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/products": {
+            "get": {
+                "tags": ["Products"],
+                "summary": "Get all the Products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Products"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Products"],
+                "summary": "Create a new Products",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/Products"
+                            },
+                            "example": {
+                                "title": "8MP Dome Camera",
+                                "quantity": 10,
+                                "price": "7000",
+                                "dateOfRecieve": "2020-12-13T17:18:38.078Z",
+                                "dateOfInvoice": "2020-12-13T17:18:38.078Z",
+                                "invoiceNumber": "5463817191",
+                                "vendorName": "Hikvision"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Products"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{productId}": {
+            "get": {
+                "tags": ["Products"],
+                "summary": "Get a single product using Product ID",
+                "parameters": [{
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "name": "productId"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Products"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Products"],
+                "summary": "Update an existing Product",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/Products"
+                            },
+                            "example": {
+                                "title": "8MP Dome Camera",
+                                "quantity": 10,
+                                "price": "7000",
+                                "dateOfRecieve": "2020-12-13T17:18:38.078Z",
+                                "dateOfInvoice": "2020-12-13T17:18:38.078Z",
+                                "invoiceNumber": "5463817191",
+                                "vendorName": "Hikvision"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Products"
+                        }
+                    }
+                }  
+            },
+            "delete": {
+                "tags": ["Products"],
+                "summary": "Delete a single product using Product ID",
+                "parameters": [{
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "name": "productId"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Products"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Products": {
+            "required": [
+                "title",
+                "quantity",
+                "price",
+                "dateOfRecieve",
+                "dateOfInvoice",
+                "invoiceNumber",
+                "vendorName"
+            ],
+            "properties": {
+                "title": {
+                    "type": "String",
+                    "uniqueItems": true
+                },
+                "quantity": {
+                    "type": "Number"
+                },
+                "price": {
+                    "type": "Number"
+                },
+                "dateOfRecieve": {
+                    "type": "Date"
+                },
+                "dateOfInvoice": {
+                    "type": "Date"
+                },
+                "invoiceNumber": {
+                    "type": "String"
+                },
+                "vendorName": {
+                    "type": "String"
+                }
+            }
+        }
+    }
+}
