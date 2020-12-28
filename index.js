@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(morgan('tiny'))
-app.use(express.static(path.join(__dirname, "client", "build")))
+app.use(express.static("client/build"))
 // const dbConfig = require('./config/database.config.js');
 const keys = require('./config/keys');
 const mongoose = require('mongoose');
@@ -45,7 +45,7 @@ require('./routes/user.js')(app)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"))
+    res.sendFile(path.join(__dirname + "/client/build/index.html"))
 })
 app.listen(process.env.PORT || 5000, () => {
     console.log(`App is listening on PORT - ${process.env.PORT}`)  
