@@ -12,7 +12,7 @@ import {
 // Register User
 export const registerUser = (userData, history) => dispatch => {
     axios
-    .post("/register", userData)
+    .post("/api/register", userData)
     .then(res => {
         store.addNotification({
             title: `Success`,
@@ -37,7 +37,7 @@ export const registerUser = (userData, history) => dispatch => {
 
 // Login - Get user token
 export const loginUser = userData => dispatch => {
-    axios.post('/login', userData)
+    axios.post('/api/login', userData)
     .then(res => {
         // Save to localstorage
 

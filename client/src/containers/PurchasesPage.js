@@ -20,7 +20,7 @@ const PurchasesPage = (props) => {
     useEffect(() => {
         if (props.auth.isAuthenticated) {
             const fetchPurchases = async () => {
-                const response = await axios.get('/purchases')
+                const response = await axios.get('/api/purchases')
     
                 setPurchases(response.data)
             }
@@ -35,7 +35,7 @@ const PurchasesPage = (props) => {
     let sumPrice = 0;
 
     const handlePurchasesEdit = (purchaseId) => {
-        Axios.get(`/purchases/${purchaseId}`)
+        Axios.get(`/api/purchases/${purchaseId}`)
         .then(res => {
             history.push(`/purchases/${purchaseId}`)
             return <EditPurchasesPage purchaseId={purchaseId} />
@@ -53,7 +53,7 @@ const PurchasesPage = (props) => {
     //           {
     //             label: 'Yes',
     //             onClick: () => {
-    //                 Axios.delete(`/purchases/${delPurchase._id}`)
+    //                 Axios.delete(`/api/purchases/${delPurchase._id}`)
     //                 .then(() => {
     //                     store.addNotification({
     //                         title: "Purchase Deleted",

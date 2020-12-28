@@ -44,7 +44,7 @@ const AddProductsPage = (props) => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        Axios.post('/products', { data: formData })
+        Axios.post('/api/products', { data: formData })
         .then(() => {
             store.addNotification({
                 title: "Product Added",

@@ -14,7 +14,7 @@ const EditSalesPage = () => {
     const [sale, setSale] = useState({})
     useEffect(() => {
         const fetchSaleInfo = async () => {
-            Axios.get(history.location.pathname)
+            Axios.get(`/api${history.location.pathname}`)
             .then(res => {
                 setSale(res.data)
             })
@@ -45,7 +45,7 @@ const EditSalesPage = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        Axios.put(`/sales/${sale._id}`, { data: sale })
+        Axios.put(`/api/sales/${sale._id}`, { data: sale })
         .then(() => {
             store.addNotification({
                 title: "Sale Updated",

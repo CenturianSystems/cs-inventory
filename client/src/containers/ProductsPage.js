@@ -19,7 +19,7 @@ const ProductsPage = (props) => {
     const [products, setProducts] = useState([])
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await axios.get('/products')
+            const response = await axios.get('/api/products')
 
             setProducts(response.data)
         }
@@ -32,7 +32,7 @@ const ProductsPage = (props) => {
     let sumPrice = 0;
 
     const handleProductEdit = (productId) => {
-        Axios.get(`/products/${productId}`)
+        Axios.get(`/api/products/${productId}`)
         .then(res => {
             history.push(`/products/${productId}`)
             return <EditProductsPage productId={productId} />
@@ -48,7 +48,7 @@ const ProductsPage = (props) => {
               {
                 label: 'Yes',
                 onClick: () => {
-                    Axios.delete(`/products/${pdct._id}`)
+                    Axios.delete(`/api/products/${pdct._id}`)
                     .then(() => {
                         store.addNotification({
                             title: "Product Deleted",
@@ -78,6 +78,8 @@ const ProductsPage = (props) => {
             ]
         });
     }
+
+    console.log(products, 'llll')
 
     return (
         <div>

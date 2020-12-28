@@ -31,7 +31,7 @@ const AddPurchasesPage = (props) => {
     useEffect(() => {
         if (props.auth.isAuthenticated) {
             const fetchProducts = async () => {
-                const response = await axios.get('/products')
+                const response = await axios.get('/api/products')
     
                 setProducts(response.data)
             }
@@ -54,7 +54,7 @@ const AddPurchasesPage = (props) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         formData.totalBill = formData.purchasesPrice * formData.quantity
-        Axios.post('/purchases', { data: formData })
+        Axios.post('/api/purchases', { data: formData })
         .then(() => {
             store.addNotification({
                 title: "Purchase Added",

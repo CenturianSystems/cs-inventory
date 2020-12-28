@@ -32,7 +32,7 @@ const AddSalesPage = (props) => {
     useEffect(() => {
         if (props.auth.isAuthenticated) {
             const fetchProducts = async () => {
-                const response = await axios.get('/products')
+                const response = await axios.get('/api/products')
     
                 setProducts(response.data)
             }
@@ -55,7 +55,7 @@ const AddSalesPage = (props) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         formData.totalBill = formData.salesPrice * formData.quantity
-        Axios.post('/sales', { data: formData })
+        Axios.post('/api/sales', { data: formData })
         .then(() => {
             store.addNotification({
                 title: "Sale Added",

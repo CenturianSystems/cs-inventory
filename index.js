@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use(morgan('tiny'))
 app.use(express.static("client/build"))
-// const dbConfig = require('./config/database.config.js');
+
 const keys = require('./config/keys');
 const mongoose = require('mongoose');
 
@@ -31,12 +31,12 @@ mongoose.connect(keys.mongoURI, {
 })
 
 
-app.get('/', (req, res) => {
-    res.json({
-        "message": "Welcome to Centurian Systems",
-        "description": "We provide the best Security Solutions that are pocket friendly and long lasting."
-    })
-})
+// app.get('/', (req, res) => {
+//     res.json({
+//         "message": "Welcome to Centurian Systems",
+//         "description": "We provide the best Security Solutions that are pocket friendly and long lasting."
+//     })
+// })
 
 require('./routes/product.route.js')(app)
 require('./routes/sale.route.js')(app)

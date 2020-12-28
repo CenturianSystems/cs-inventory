@@ -14,7 +14,7 @@ const EditPurchasesPage = () => {
     const [purchase, setPurchase] = useState({})
     useEffect(() => {
         const fetchPurchaseInfo = async () => {
-            Axios.get(history.location.pathname)
+            Axios.get(`/api${history.location.pathname}`)
             .then(res => {
                 setPurchase(res.data)
             })
@@ -45,7 +45,7 @@ const EditPurchasesPage = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        Axios.put(`/purchases/${purchase._id}`, { data: purchase })
+        Axios.put(`/api/purchases/${purchase._id}`, { data: purchase })
         .then(() => {
             store.addNotification({
                 title: "Purchase Updated",

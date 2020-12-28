@@ -20,7 +20,7 @@ const SalesPage = (props) => {
     useEffect(() => {
         if (props.auth.isAuthenticated) {
             const fetchSales = async () => {
-                const response = await axios.get('/sales')
+                const response = await axios.get('/api/sales')
     
                 setSales(response.data)
             }
@@ -35,7 +35,7 @@ const SalesPage = (props) => {
     let sumPrice = 0;
 
     const handleSalesEdit = (saleId) => {
-        Axios.get(`/sales/${saleId}`)
+        Axios.get(`/api/sales/${saleId}`)
         .then(res => {
             history.push(`/sales/${saleId}`)
             return <EditSalesPage saleId={saleId} />
@@ -53,7 +53,7 @@ const SalesPage = (props) => {
     //           {
     //             label: 'Yes',
     //             onClick: () => {
-    //                 Axios.delete(`/sales/${delSale._id}`)
+    //                 Axios.delete(`/api/sales/${delSale._id}`)
     //                 .then(() => {
     //                     store.addNotification({
     //                         title: "Sale Deleted",

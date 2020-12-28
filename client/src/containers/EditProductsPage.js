@@ -14,7 +14,7 @@ const EditProductsPage = () => {
     const [product, setProduct] = useState({})
     useEffect(() => {
         const fetchProductInfo = async () => {
-            Axios.get(history.location.pathname)
+            Axios.get(`/api${history.location.pathname}`)
             .then(res => {
                 setProduct(res.data)
             })
@@ -45,7 +45,7 @@ const EditProductsPage = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        Axios.put(`/products/${product._id}`, { data: product })
+        Axios.put(`/api/products/${product._id}`, { data: product })
         .then(() => {
             store.addNotification({
                 title: "Product Updated",
