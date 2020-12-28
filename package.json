@@ -2,12 +2,12 @@
   "name": "centurian-systems-inventory",
   "version": "1.0.0",
   "description": "A simple inventory management system for internal use.",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "dev-server": "nodemon server.js",
+    "dev-server": "nodemon index.js",
     "client-install": "npm install --prefix client",
-    "start": "node server.js",
-    "server": "nodemon server.js",
+    "start": "node index.js",
+    "server": "nodemon index.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "cd client && npm install && npm run build"
