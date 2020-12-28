@@ -2,8 +2,8 @@ const Validator = require('validator').default;
 const isEmpty = require('is-empty');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const keys = require("../../config/keys");
-const User = require('../models/user.js');
+const keys = require('../config/keys');
+const User = require('../models/User');
 
 const validateLoginInput = (data) => {
     let errors = {};
