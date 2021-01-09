@@ -8,6 +8,9 @@ import Button from 'react-bootstrap/Button'
 import Axios from 'axios';
 import { FaArrowLeft } from 'react-icons/fa'
 import { store } from 'react-notifications-component';
+import { Helmet } from 'react-helmet';
+import 'react-day-picker/lib/style.css';
+import DayPicker from 'react-day-picker'
 
 const EditPurchasesPage = () => {
     const history = useHistory()
@@ -16,23 +19,15 @@ const EditPurchasesPage = () => {
         const fetchPurchaseInfo = async () => {
             Axios.get(`/api${history.location.pathname}`)
             .then(res => {
+                console.log(res.data, 'DATA')
                 setPurchase(res.data)
             })
         }
         fetchPurchaseInfo();
     }, [history.location.pathname])
     const today = Date.now();
-    const DOS = new Date(purchase.dateOfPurchase)
-    const DOI = new Date(purchase.dateOfInvoice)
-    
-    // Breaking Date for show during edit
-    const dateDOI = DOI.getDate()
-    const monthDOI = DOI.getMonth()
-    const yearDOI = DOI.getFullYear()
-
-    const dateDOS = DOS.getDate()
-    const monthDOS = DOS.getMonth()
-    const yearDOS = DOS.getFullYear() 
+    const DOP = new Date(purchase.dateOfPurchase)
+    const DOI = new Date(purchase.dateOfInvoice) 
 
     const handleFormChange = (e, updatedAt) => {
         const name = e.target.name;
@@ -45,6 +40,7 @@ const EditPurchasesPage = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
+        console.log(purchase);
         Axios.put(`/api/purchases/${purchase._id}`, { data: purchase })
         .then(() => {
             store.addNotification({
@@ -77,6 +73,16 @@ const EditPurchasesPage = () => {
                     Edit Purchase
                 </h1>
             
+                <Helmet>
+                   <style>{`
+                       .DayPicker {
+                            margin-top: 20px;
+                            border: 1px solid gray;
+                            border-radius: 10px;
+                       }
+                   `}</style>
+                </Helmet>
+
                 <Form onSubmit={handleFormSubmit} style={{
                     marginTop: 20,
                     padding: 20,
@@ -119,12 +125,40 @@ const EditPurchasesPage = () => {
 
                         <Form.Group as={Col} controlId="formGridState">
                             <Form.Label>Date of Purchase</Form.Label>
-                            <Form.Control name="dateOfPurchase" value={`${yearDOS}-${monthDOS}-${dateDOS}`} onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfPurchase" readOnly value={DOP ? DOP.toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(DOP) ? new Date(2020, 11)  : new Date(DOP.getUTCFullYear(), DOI.getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={DOP || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setPurchase({
+                                            ...purchase,
+                                            dateOfPurchase: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
 
                         <Form.Group as={Col} controlId="formGridZip">
                             <Form.Label>Date of Invoice</Form.Label>
-                            <Form.Control name="dateOfInvoice" value={`${yearDOI}-${monthDOI}-${dateDOI}`} onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfInvoice" readOnly value={DOI ? DOI.toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(DOI) ? new Date(2020, 11)  : new Date(DOI.getUTCFullYear(), DOI.getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={DOI || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setPurchase({
+                                            ...purchase,
+                                            dateOfInvoice: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
                     </Form.Row>
 

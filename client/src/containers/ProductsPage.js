@@ -79,8 +79,6 @@ const ProductsPage = (props) => {
         });
     }
 
-    console.log(products, 'llll')
-
     return (
         <div>
             <Container>

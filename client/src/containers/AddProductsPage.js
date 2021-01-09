@@ -11,6 +11,9 @@ import { store } from 'react-notifications-component';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { useEffect } from 'react'
+import { Helmet } from 'react-helmet';
+import 'react-day-picker/lib/style.css';
+import DayPicker from 'react-day-picker'
 
 const initialData = Object.freeze({
     title: "",
@@ -75,6 +78,16 @@ const AddProductsPage = (props) => {
                     </Button>
                     Add Product
                 </h1>
+                <Helmet>
+                   <style>{`
+                       .DayPicker {
+                            margin-top: 20px;
+                            border: 1px solid gray;
+                            border-radius: 10px;
+                       }
+                   `}</style>
+                </Helmet>
+
                 <Form onSubmit={handleFormSubmit} style={{
                     marginTop: 20,
                     padding: 20,
@@ -113,14 +126,43 @@ const AddProductsPage = (props) => {
                             <Form.Control name="price" onChange={handleFormChange} placeholder="Enter the GST percentage" type="number" min="0"/>
                         </Form.Group> */}
 
-                        <Form.Group as={Col} controlId="formGridState">
+                        <Form.Group style={{textAlign: 'center'}} as={Col}>
                             <Form.Label>Date of Recieve</Form.Label>
-                            <Form.Control name="dateOfRecieve" onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfRecieve" readOnly value={formData.dateOfRecieve ? new Date(formData.dateOfRecieve).toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(new Date(formData.dateOfRecieve)) ? new Date(2020, 11)  : new Date(new Date(formData.dateOfRecieve).getUTCFullYear(), new Date(formData.dateOfRecieve).getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={new Date(formData.dateOfRecieve) || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        console.log(tempDate,'llll')
+                                        setFormData({
+                                            ...formData,
+                                            dateOfRecieve: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
 
-                        <Form.Group as={Col} controlId="formGridZip">
+                        <Form.Group style={{textAlign: 'center'}} as={Col}>
                             <Form.Label>Date of Invoice</Form.Label>
-                            <Form.Control name="dateOfInvoice" onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfInvoice" readOnly value={formData.dateOfInvoice ? new Date(formData.dateOfInvoice).toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(new Date(formData.dateOfInvoice)) ? new Date(2020, 11)  : new Date(new Date(formData.dateOfInvoice).getUTCFullYear(), new Date(formData.dateOfInvoice).getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={new Date(formData.dateOfInvoice) || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setFormData({
+                                            ...formData,
+                                            dateOfInvoice: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
                     </Form.Row>
 
