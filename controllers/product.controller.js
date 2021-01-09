@@ -12,9 +12,7 @@ exports.create = (req, res) => {
         invoiceNumber,
         vendorName
     } = req.body.data
-    console.log(req.body.data)
     if (!title || !quantity || !price || !dateOfRecieve || !dateOfInvoice || !invoiceNumber || !vendorName) {
-        console.log('Here')
         return res.status(400).send({
             "message": "Please fill in all the fields"
         })
@@ -32,7 +30,6 @@ exports.create = (req, res) => {
 
     product.save()
     .then(data => {
-        console.log(data, ';;l;')
         res.send(data)
     }).catch(err => {
         res.status(500).send({
@@ -88,7 +85,6 @@ exports.update = (req, res) => {
         invoiceNumber,
         vendorName
     } = req.body.data
-    console.log(req.body.data)
     if (!title || !quantity || !price || !dateOfRecieve || !dateOfInvoice || !invoiceNumber || !vendorName) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
