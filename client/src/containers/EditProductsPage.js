@@ -8,6 +8,9 @@ import Button from 'react-bootstrap/Button'
 import Axios from 'axios';
 import { FaArrowLeft } from 'react-icons/fa'
 import { store } from 'react-notifications-component';
+import { Helmet } from 'react-helmet';
+import 'react-day-picker/lib/style.css';
+import DayPicker from 'react-day-picker'
 
 const EditProductsPage = () => {
     const history = useHistory()
@@ -21,22 +24,13 @@ const EditProductsPage = () => {
         }
         fetchProductInfo();
     }, [history.location.pathname])
-    const today = Date.now();
+    const today = Date.now()
     const DOR = new Date(product.dateOfRecieve)
     const DOI = new Date(product.dateOfInvoice)
-    
-    // Breaking Date for show during edit
-    const dateDOI = DOI.getDate()
-    const monthDOI = DOI.getMonth()
-    const yearDOI = DOI.getFullYear()
-
-    const dateDOR = DOR.getDate()
-    const monthDOR = DOR.getMonth()
-    const yearDOR = DOR.getFullYear()
-
     const handleFormChange = (e, updatedAt) => {
         const name = e.target.name;
         const value = e.target.value;
+
         setProduct({
             ...product,
             [name]: value
@@ -76,6 +70,15 @@ const EditProductsPage = () => {
                     </Button>
                     Edit Product
                 </h1>
+                <Helmet>
+                   <style>{`
+                       .DayPicker {
+                            margin-top: 20px;
+                            border: 1px solid gray;
+                            border-radius: 10px;
+                       }
+                   `}</style>
+                </Helmet>
             
                 <Form onSubmit={handleFormSubmit} style={{
                     marginTop: 20,
@@ -110,14 +113,42 @@ const EditProductsPage = () => {
                             <Form.Control name="price" value={product.price} onChange={handleFormChange} placeholder="Enter the price of the item"/>
                         </Form.Group>
 
-                        <Form.Group as={Col} controlId="formGridState">
+                        <Form.Group style={{textAlign: 'center'}} as={Col}>
                             <Form.Label>Date of Recieve</Form.Label>
-                            <Form.Control name="dateOfRecieve" value={`${yearDOR}-${monthDOR}-${dateDOR}`} onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfRecieve" readOnly value={DOR ? DOR.toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={isNaN(DOR) ? new Date(2020, 11) : new Date(DOR.getUTCFullYear(), DOR.getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={DOR || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setProduct({
+                                            ...product,
+                                            dateOfRecieve: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
 
-                        <Form.Group as={Col} controlId="formGridZip">
+                        <Form.Group style={{textAlign: 'center'}} as={Col}>
                             <Form.Label>Date of Invoice</Form.Label>
-                            <Form.Control name="dateOfInvoice" value={`${yearDOI}-${monthDOI}-${dateDOI}`} onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfInvoice" readOnly value={DOI ? DOI.toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(DOI) ? new Date(2020, 11)  : new Date(DOI.getUTCFullYear(), DOI.getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={DOI || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setProduct({
+                                            ...product,
+                                            dateOfInvoice: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
                     </Form.Row>
 

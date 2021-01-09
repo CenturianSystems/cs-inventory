@@ -12,6 +12,9 @@ import { store } from 'react-notifications-component';
 import Select from 'react-select'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
+import { Helmet } from 'react-helmet';
+import 'react-day-picker/lib/style.css';
+import DayPicker from 'react-day-picker'
 
 const initialData = Object.freeze({
     productName: "",
@@ -103,6 +106,17 @@ const AddSalesPage = (props) => {
                     </Button>
                     Add Sale
                 </h1>
+
+                <Helmet>
+                    <style>{`
+                       .DayPicker {
+                            margin-top: 20px;
+                            border: 1px solid gray;
+                            border-radius: 10px;
+                       }
+                   `}</style>
+                </Helmet>
+
                 <Form onSubmit={handleFormSubmit} style={{
                     marginTop: 20,
                     padding: 20,
@@ -145,12 +159,40 @@ const AddSalesPage = (props) => {
 
                         <Form.Group as={Col} controlId="formGridState">
                             <Form.Label>Date of Sale</Form.Label>
-                            <Form.Control name="dateOfSale" onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfSale" readOnly value={formData.dateOfSale ? new Date(formData.dateOfSale).toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(new Date(formData.dateOfSale)) ? new Date(2020, 11)  : new Date(new Date(formData.dateOfSale).getUTCFullYear(), new Date(formData.dateOfSale).getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={new Date(formData.dateOfSale) || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setFormData({
+                                            ...formData,
+                                            dateOfSale: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
 
                         <Form.Group as={Col} controlId="formGridZip">
                             <Form.Label>Date of Invoice</Form.Label>
-                            <Form.Control name="dateOfInvoice" onChange={handleFormChange} type="date" min={today} />
+                            <Form.Control name="dateOfInvoice" readOnly value={formData.dateOfInvoice ? new Date(formData.dateOfInvoice).toDateString() : today.toDateString()} />
+                            <DayPicker
+                                month={ isNaN(new Date(formData.dateOfInvoice)) ? new Date(2020, 11)  : new Date(new Date(formData.dateOfInvoice).getUTCFullYear(), new Date(formData.dateOfInvoice).getUTCMonth())}
+                                showOutsideDays
+                                selectedDays={new Date(formData.dateOfInvoice) || today}
+                                onDayClick={
+                                    (selectedDays) => {
+                                        const tempDate = new Date(selectedDays)
+                                        setFormData({
+                                            ...formData,
+                                            dateOfInvoice: tempDate.toISOString()
+                                        })
+                                    }
+                                }
+                             />
                         </Form.Group>
                     </Form.Row>
 

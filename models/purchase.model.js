@@ -4,7 +4,7 @@ const PurchasesSchema = mongoose.Schema({
     productName: String,
     quantity: Number,
     invoiceNumber: String,
-    salesPrice: Number,
+    purchasesPrice: Number,
     dateOfPurchase: Date,
     dateOfInvoice: Date,
     customerName: String,
