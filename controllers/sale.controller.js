@@ -15,7 +15,6 @@ exports.create = (req, res) => {
         customerContact,
         totalBill
     } = data
-    console.log(data)
     if (!productName || !quantity || !salesPrice || !dateOfSale || !dateOfInvoice || !invoiceNumber || !customerName || !customerContact || !totalBill) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
@@ -93,7 +92,6 @@ exports.update = (req, res) => {
         customerContact,
         totalBill
     } = req.body.data
-    console.log(req.body.data)
     if (!productName || !quantity || !salesPrice || !dateOfSale || !dateOfInvoice || !invoiceNumber || !customerName || !customerContact || !totalBill) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
@@ -135,7 +133,6 @@ exports.update = (req, res) => {
 
 // Delete a Sale
 exports.delete = (req, res) => {
-    console.log('here', req.params)
     Sale.findByIdAndRemove(req.params.saleId)
         .then(sale => {
             if (!sale) {

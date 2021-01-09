@@ -57,7 +57,6 @@ const AddPurchasesPage = (props) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         formData.totalBill = formData.purchasesPrice * formData.quantity
-        console.log(formData, "DATA")
         Axios.post('/api/purchases', { data: formData })
         .then(() => {
             store.addNotification({

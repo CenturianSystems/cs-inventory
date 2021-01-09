@@ -136,7 +136,6 @@ const AddProductsPage = (props) => {
                                 onDayClick={
                                     (selectedDays) => {
                                         const tempDate = new Date(selectedDays)
-                                        console.log(tempDate,'llll')
                                         setFormData({
                                             ...formData,
                                             dateOfRecieve: tempDate.toISOString()
