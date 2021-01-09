@@ -32,7 +32,7 @@ const logout = () => {
 }
 
 function MyNavbar(props) {
-
+    console.log(props.auth)
     return (
         <div>
             <Navbar bg="dark" sticky="top" expand="lg" variant="dark">
@@ -46,6 +46,7 @@ function MyNavbar(props) {
                         <Nav.Link disabled={!props.auth.isAuthenticated} href="/purchases">Purchase</Nav.Link>
                     </Nav>
                     <Nav>
+                        <Nav.Link href="/dashboard" style={{display: `${props.auth.user.isAdmin ? 'block' : 'none'}`}}>Dashboard</Nav.Link>
                         <DropdownButton
                             rootCloseEvent="click"
                             variant="secondary"

@@ -44,9 +44,9 @@ require('./routes/purchase.route.js')(app)
 require('./routes/user.js')(app)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + "/client/build/index.html"))
-})
+// app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname + "/client/build/index.html"))
+// })
 app.listen(process.env.PORT || 5000, () => {
     console.log(`App is listening on PORT - ${process.env.PORT}`)  
 })

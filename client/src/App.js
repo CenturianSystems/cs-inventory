@@ -26,6 +26,7 @@ import jwt_decode from "jwt-decode";
 import setAuthToken from "./utils/setAuthToken";
 import { setCurrentUser, logoutUser } from "./actions/authActions";
 import PrivateRoute from "./components/private-route/PrivateRoute";
+import Dashboard from "./components/Dashboard";
 
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -59,7 +60,10 @@ function App() {
       <ReactNotification />
       <Router>
         <Switch>
-          <PrivateRoute exact path="/" component={Home} />
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <PrivateRoute exact path="/dashboard" component={Dashboard} />
           <Route exact path="/products">
             <ProductsPage />
           </Route>

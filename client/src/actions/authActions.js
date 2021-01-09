@@ -62,6 +62,7 @@ export const loginUser = userData => dispatch => {
         
         // Decode token to get userData
         const decoded = jwt_decode(token);
+        console.log(decoded, 'DEMOC', token)
         dispatch(setCurrentUser(decoded))
     })
     .catch(err => {
@@ -100,10 +101,48 @@ export const loginUser = userData => dispatch => {
 
 // Set Logged in User
 export const setCurrentUser = decoded => {
-    return {
-        type: SET_CURRENT_USER,
-        payload: decoded
-    }
+    // const { id } = decoded;
+    // axios.get(`/api/users/${id}`)
+    // .then(res => {
+    //     const { isAdmin } = res.data
+    //     decoded.isAdmin = isAdmin;
+        return {
+            type: SET_CURRENT_USER,
+            payload: decoded
+        }
+    // })
+    // .catch(err => {
+    //     let errorTitle = "Error"
+    //     let errorMessage = "An Error occured"
+    //     if (err.response.data) {
+    //         if (err.response.data.emailnotfound) {
+    //             errorTitle = err.response.data.emailnotfound;
+    //             errorMessage = "This email is not registered with us."
+    //         }
+
+    //         if (err.response.data.passwordincorrect) {
+    //             errorTitle = err.response.data.passwordincorrect;
+    //             errorMessage = "Please enter the correct password."
+    //         }
+    //     }
+    //     store.addNotification({
+    //         title: `${errorTitle}`,
+    //         message: `${errorMessage}`,
+    //         type: "danger",
+    //         insert: "top",
+    //         container: "top-right",
+    //         animationIn: ["animate__animated", "animate__fadeIn"],
+    //         animationOut: ["animate__animated", "animate__fadeOut"],
+    //         dismiss: {
+    //           duration: 5000,
+    //           onScreen: true
+    //         }
+    //     });
+    //     dispatch({
+    //         type: GET_ERRORS,
+    //         payload: err.response.data
+    //     })
+    // })
 }
 
 // User Loading

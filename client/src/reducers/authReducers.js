@@ -7,6 +7,7 @@ const isEmpty = require('is-empty');
 
 const initialState = {
     isAuthenticated: false,
+    isAdmin: false,
     user: {},
     loading: false
 }

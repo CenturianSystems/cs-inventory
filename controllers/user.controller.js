@@ -36,6 +36,7 @@ const validateRegisterInput = (data) => {
     data.email = !isEmpty(data.email) ? data.email : "";
     data.password = !isEmpty(data.password) ? data.password : "";
     data.password2 = !isEmpty(data.password2) ? data.password2 : "";
+    data.isAdmin = !isEmpty(data.isAdmin) ? data.isAdmin : false;
 
     // Name checks
     if (Validator.isEmpty(data.name)) {
@@ -152,7 +153,8 @@ exports.register = (req, res) => {
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
-                password: req.body.password
+                password: req.body.password,
+                isAdmin: req.body.isAdmin || false
             });
             
             // Hash password before saving in database
@@ -168,4 +170,123 @@ exports.register = (req, res) => {
             });
         }
     });
+}
+
+exports.getAllUsers = (req, res) => {
+    User.find()
+    .then(users => {
+        res.send(users)
+    })
+    .catch(err => {
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving users."
+        });
+    })
+}
+
+// Find a single User
+exports.findOne = (req, res) => {
+    User.findById(req.params.userId)
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({
+                    message: "User not found with id " + req.params.userId
+                });
+            }
+            res.send(user);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "User not found with id " + req.params.userId
+                });
+            }
+            return res.status(500).send({
+                message: "Error retrieving user with id " + req.params.userId
+            });
+        });
+}
+
+// Update a User
+exports.update = (req, res) => {
+    console.log(req.body)
+    // Validate the request
+    const {
+        name,
+        email,
+        password,
+        isAdmin
+    } = req.body.data || req.body
+    
+    if (!name || !email || !password) {
+        return res.status(400).send({
+            "message": "Please fill in all the fields"
+        })
+    }
+
+    // Find user and update it with the request body
+    User.findByIdAndUpdate(req.params.userId, {
+            name,
+            email,
+            password,
+            isAdmin
+        }, {
+            new: true
+        })
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({
+                    message: "User not found with id " + req.params.userId
+                });
+            }
+
+            let newUser = user;
+
+            // Hash password before saving in database
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    newUser.password = hash;
+                    newUser
+                        .save()
+                        .then(user => res.json(user))
+                        .catch(err => console.log(err));
+                });
+            });
+
+            // res.send(user);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "User not found with id " + req.params.userId
+                });
+            }
+            return res.status(500).send({
+                message: "Error updating user with id " + req.params.userId
+            });
+        });
+}
+
+// Delete a User
+exports.delete = (req, res) => {
+    console.log('here', req.params)
+    User.findByIdAndRemove(req.params.userId)
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({
+                    message: "User not found with id " + req.params.userId
+                });
+            }
+            res.send({
+                message: "User deleted successfully!"
+            });
+        }).catch(err => {
+            if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                return res.status(404).send({
+                    message: "User not found with id " + req.params.userId
+                });
+            }
+            return res.status(500).send({
+                message: "Could not delete user with id " + req.params.userId
+            });
+        });
 }
