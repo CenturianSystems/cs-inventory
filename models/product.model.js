@@ -1,12 +1,19 @@
 const mongoose = require('mongoose');
 
+const transactionsQty = {
+    quantity: Number,
+    invoiceNumber: String,
+    dateOfTransaction: Date
+}
+
 const ProductSchema = mongoose.Schema({
     title: String,
-    quantity: Number,
-    price: String,
+    productUID: String,
+    totalQuantity: Number,
+    price: Number,
     dateOfRecieve: Date,
     dateOfInvoice: Date,
-    invoiceNumber: String,
+    transactions: [transactionsQty],
     vendorName: String
 }, {
     timestamps: true
