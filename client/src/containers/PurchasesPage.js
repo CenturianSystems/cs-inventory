@@ -49,12 +49,9 @@ const PurchasesPage = (props) => {
         })
     }
 
-    const handleProductDelete = (invoiceNumber) => {}
-
     // Delete a Purchase - ADMIN Only
     const handlePurchasesDelete = (purchaseId) => {
         const [delPurchase] = purchases.filter(purchase => purchase._id === purchaseId)
-        // console.log(delPurchase)
         confirmAlert({
             title: `Delete ${delPurchase.invoiceNumber}`,
             message: 'Are you sure you want to delete this ? This action is irreversable.',

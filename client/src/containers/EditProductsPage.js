@@ -28,8 +28,6 @@ const EditProductsPage = () => {
     const DOR = new Date(product.dateOfRecieve)
     const DOI = new Date(product.dateOfInvoice)
 
-    console.log('PRODUCT', product)
-
     const addTransactionRow = (e) => {
         const newTransaction = {
             invoiceNumber: "",
@@ -62,7 +60,6 @@ const EditProductsPage = () => {
             ...item,
             [name]: value
         };
-        console.log(transactionArray,'LOL')
         setProduct({
             ...product,
             transactions: transactionArray 
@@ -84,7 +81,6 @@ const EditProductsPage = () => {
         let totalQty = 0;
         product.transactions.forEach(item => {
             totalQty += Number(item.quantity)
-            console.log(item.quantity, 'LLL', totalQty)
         })
         product.totalQuantity = totalQty;
         Axios.put(`/api/products/${product._id}`, { data: product })

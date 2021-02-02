@@ -72,7 +72,6 @@ const AddProductsPage = (props) => {
             ...item,
             [name]: value,
         };
-        console.log(transactionArray,'LOL')
         setFormData({
             ...formData,
             transactions: transactionArray 
@@ -94,10 +93,8 @@ const AddProductsPage = (props) => {
         formData.transactions.forEach(item => {
             totalQty += Number(item.quantity)
             item.dateOfTransaction = formData.dateOfInvoice
-            console.log(item.quantity, 'LLL', totalQty)
         })
         formData.totalQuantity = totalQty;
-        console.log(formData, "FORMDATA")
         Axios.post('/api/products', { data: formData })
         .then(() => {
             store.addNotification({

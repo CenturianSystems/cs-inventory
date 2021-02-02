@@ -106,23 +106,18 @@ const AddPurchasesPage = (props) => {
         let existingProducts = [];
         formData.productItems.forEach((item, index) => {
             existingProducts = products.filter(prdt => prdt.productUID === item.productId)
-            console.log(existingProducts, 'Existing Products')
-
             existingProducts.map(product => {
                 if (product.productUID === item.productId) {
-                    console.log(product, Number(product.totalQuantity))
                     product.transactions.push({
                         invoiceNumber: formData.invoiceNumber,
                         quantity: Number(formData.productItems[index].quantity),
                         dateOfTransaction: formData.dateOfInvoice
                     })
-                    console.log(item, formData.productItems[index].quantity, product)
                 }
                 return null;
             })
         })
 
-        console.log(formData, 'FORMDATA')
         Axios.post('/api/purchases', { data: formData })
         .then(() => {
             store.addNotification({
@@ -184,7 +179,7 @@ const AddPurchasesPage = (props) => {
                                             <Button style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, marginRight: 10}} onClick={addPurchaseRow}>
                                                 <FaPlus />
                                             </Button>
-                                            <Button variant="danger" style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, display: formData.productItems.length > 1 ? 'block' : 'none'}} onClick={() => { console.log(product, index); deletePurchaseRow(index)}}>
+                                            <Button variant="danger" style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, display: formData.productItems.length > 1 ? 'block' : 'none'}} onClick={() => deletePurchaseRow(index)}>
                                                 <FaTrash />
                                             </Button>
                                         </Form.Row>

@@ -19,7 +19,6 @@ import { connect } from 'react-redux'
 
 function MydModalWithGrid(props) {
     const {transactionData} = props;
-    console.log(transactionData, 'LOLLLLL',)
     const {title, transactions } = transactionData
     let sumQty = 0
     return (
@@ -105,15 +104,8 @@ const ProductsPage = (props) => {
 
     const handleTransactionDisplay = (productId) => {
         const [product] = products.filter(prdt => prdt._id === productId)
-        console.log(product)
         setProductData(product)
-        console.log(productData)
-        // if (modalShow) {
-            setModalShow(true);
-        // } else {
-        //     setModalShow(true);
-        // }
-
+        setModalShow(true);
     }
 
     const handleProductDelete = (productId) => {
