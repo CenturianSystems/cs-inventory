@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import Axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaPlus, FaTrash } from 'react-icons/fa'
 import { store } from 'react-notifications-component';
 import { Helmet } from 'react-helmet';
 import 'react-day-picker/lib/style.css';
@@ -27,6 +27,45 @@ const EditProductsPage = () => {
     const today = Date.now()
     const DOR = new Date(product.dateOfRecieve)
     const DOI = new Date(product.dateOfInvoice)
+
+    const addTransactionRow = (e) => {
+        const newTransaction = {
+            invoiceNumber: "",
+            quantity: 0,
+        };
+        const newTransactionArray = product.transactions
+        newTransactionArray.push(newTransaction)
+        setProduct({
+            ...product,
+            transactions: newTransactionArray
+        })
+    }
+
+    const deleteTransactionRow = (index) => {
+        const newTransactionArray = product.transactions
+        newTransactionArray.splice(index, 1)
+        setProduct({
+            ...product,
+            transactions: newTransactionArray
+        })
+    }
+
+    const handleTransactionChange = (event, index) => {
+        event.preventDefault();
+        const transactionArray = product.transactions;
+        const item = transactionArray[index];
+        const name = event.target.name;
+        const value = event.target.value;
+        transactionArray[index] = {
+            ...item,
+            [name]: value
+        };
+        setProduct({
+            ...product,
+            transactions: transactionArray 
+        })
+    }
+
     const handleFormChange = (e, updatedAt) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -39,6 +78,11 @@ const EditProductsPage = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
+        let totalQty = 0;
+        product.transactions.forEach(item => {
+            totalQty += Number(item.quantity)
+        })
+        product.totalQuantity = totalQty;
         Axios.put(`/api/products/${product._id}`, { data: product })
         .then(() => {
             store.addNotification({
@@ -87,32 +131,30 @@ const EditProductsPage = () => {
                     border: '1px solid gray'
                 }}>
                     <Form.Row>
+                        <Form.Group as={Col}>
+                            <Form.Label>Product UID</Form.Label>
+                            <Form.Control name="productUID" onChange={handleFormChange} type="text" value={product.productUID} placeholder="Enter product UID" />
+                        </Form.Group>
+
                         <Form.Group as={Col} controlId="itemName">
                             <Form.Label>Item Name</Form.Label>
                             <Form.Control name="title" onChange={handleFormChange} type="text" value={product.title} placeholder="Enter Item Name" />
                         </Form.Group>
-                        
-                        <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control name="quantity" onChange={handleFormChange} type="number" value={product.quantity} min="0" placeholder="Enter Item Quantity" />
-                        </Form.Group>
                     </Form.Row>
-                    
-                    <Form.Group controlId="formGridAddress1">
-                        <Form.Label>Vendor Name</Form.Label>
-                        <Form.Control name="vendorName" value={product.vendorName} onChange={handleFormChange}   placeholder="E.g: Hikvision" />
-                    </Form.Group>
-                    
-                    <Form.Group controlId="formGridAddress2">
-                        <Form.Label>Invoice Number</Form.Label>
-                        <Form.Control name="invoiceNumber" value={product.invoiceNumber} onChange={handleFormChange} placeholder="Enter the Invoice Number" />
-                    </Form.Group>
+
                     <Form.Row>
                         <Form.Group as={Col} controlId="formGridCity">
                             <Form.Label>Price</Form.Label>
                             <Form.Control name="price" value={product.price} onChange={handleFormChange} placeholder="Enter the price of the item"/>
                         </Form.Group>
 
+                        <Form.Group controlId="formGridAddress1">
+                            <Form.Label>Vendor Name</Form.Label>
+                            <Form.Control name="vendorName" value={product.vendorName} onChange={handleFormChange}   placeholder="E.g: Hikvision" />
+                        </Form.Group>
+                    </Form.Row>
+
+                    <Form.Row>
                         <Form.Group style={{textAlign: 'center'}} as={Col}>
                             <Form.Label>Date of Recieve</Form.Label>
                             <Form.Control name="dateOfRecieve" readOnly value={DOR ? DOR.toDateString() : today.toDateString()} />
@@ -151,6 +193,41 @@ const EditProductsPage = () => {
                              />
                         </Form.Group>
                     </Form.Row>
+
+                    {
+                        product && product.transactions
+                        ? product.transactions.map(
+                            (transaction, index) => {
+                                return (
+                                    <div style={{border: '1px solid grey', padding: 10, marginBottom: 20, borderRadius: 10}}>
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                                <h3>Transaction {index+1}</h3>
+                                            </Form.Group>
+                                            <Button style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, marginRight: 10}} onClick={addTransactionRow}>
+                                                <FaPlus />
+                                            </Button>
+                                            <Button variant="danger" style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, display: product.transactions.length > 1 ? 'block' : 'none'}} onClick={() => deleteTransactionRow(index)}>
+                                                <FaTrash />
+                                            </Button>
+                                        </Form.Row>
+                                        
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                                <Form.Label>Quantity</Form.Label>
+                                                <Form.Control name="quantity" value={transaction.quantity} onChange={(e) => handleTransactionChange(e, index)} type="number" onScroll={() => {}} placeholder="Enter Item Quantity" />
+                                            </Form.Group>
+                                            
+                                            <Form.Group as={Col}>
+                                                <Form.Label>Invoice Number</Form.Label>
+                                                <Form.Control name="invoiceNumber" value={transaction.invoiceNumber} onChange={(e) => handleTransactionChange(e, index)} placeholder="Enter the Invoice Number" />
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </div>
+                                )
+                            }
+                        ) : <h1>No Transactions</h1>
+                    }
 
                     <Button variant="primary" type="submit">
                         Update

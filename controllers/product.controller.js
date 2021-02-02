@@ -2,17 +2,19 @@ const Product = require('../models/product.model.js');
 
 // Create and Save a new Product
 exports.create = (req, res) => {
+    const data = req.body && req.body.data ? req.body.data : req.body
     // Validate the request
     const {
         title,
-        quantity,
+        productUID,
+        totalQuantity,
         price,
         dateOfRecieve,
         dateOfInvoice,
-        invoiceNumber,
+        transactions,
         vendorName
-    } = req.body.data
-    if (!title || !quantity || !price || !dateOfRecieve || !dateOfInvoice || !invoiceNumber || !vendorName) {
+    } = data
+    if (!title || !productUID || !totalQuantity || !price || !dateOfRecieve || !dateOfInvoice || transactions.length <= 0 || !vendorName) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
         })
@@ -20,11 +22,12 @@ exports.create = (req, res) => {
 
     const product = new Product({
         title,
-        quantity,
+        productUID,
+        totalQuantity,
         price,
         dateOfRecieve,
         dateOfInvoice,
-        invoiceNumber,
+        transactions,
         vendorName
     })
 
@@ -75,17 +78,19 @@ exports.findOne = (req, res) => {
 
 // Update a Product
 exports.update = (req, res) => {
+    const data = req.body && req.body.data ? req.body.data : req.body
     // Validate the request
     const {
         title,
-        quantity,
+        productUID,
+        totalQuantity,
         price,
         dateOfRecieve,
         dateOfInvoice,
-        invoiceNumber,
+        transactions,
         vendorName
-    } = req.body.data
-    if (!title || !quantity || !price || !dateOfRecieve || !dateOfInvoice || !invoiceNumber || !vendorName) {
+    } = data
+    if (!title || !productUID || !totalQuantity || !price || !dateOfRecieve || !dateOfInvoice || transactions.length <= 0 || !vendorName) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
         })
@@ -94,11 +99,12 @@ exports.update = (req, res) => {
     // Find product and update it with the request body
     Product.findByIdAndUpdate(req.params.productId, {
         title,
-        quantity,
+        productUID,
+        totalQuantity,
         price,
         dateOfRecieve,
         dateOfInvoice,
-        invoiceNumber,
+        transactions,
         vendorName
     }, {new: true})
     .then(product => {

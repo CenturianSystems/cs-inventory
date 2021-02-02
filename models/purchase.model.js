@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 
-const PurchasesSchema = mongoose.Schema({
+const newItemPurchase = {
+    productId: String,
     productName: String,
     quantity: Number,
+    price: Number
+
+}
+
+const PurchasesSchema = mongoose.Schema({
+    productItems: [newItemPurchase],
     invoiceNumber: String,
     purchasesPrice: Number,
     dateOfPurchase: Date,

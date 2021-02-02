@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
+import Modal from 'react-bootstrap/Modal'
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
 import Table from 'react-bootstrap/Table'
 import axios from 'axios'
 import './container.css'
 import Button from 'react-bootstrap/esm/Button';
-import { FaPlus, FaEdit, FaTrashAlt } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaTrashAlt, FaFileAlt } from 'react-icons/fa'
 import Axios from 'axios';
 import EditProductsPage from './EditProductsPage';
 import { confirmAlert } from 'react-confirm-alert';
@@ -14,9 +17,69 @@ import { store } from 'react-notifications-component'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
+function MydModalWithGrid(props) {
+    const {transactionData} = props;
+    const {title, transactions } = transactionData
+    let sumQty = 0
+    return (
+      <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {title}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="show-grid">
+          <Container>
+            <Table striped responsive bordered hover>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Invoice Number</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            transactions && transactions.length > 0
+                            ? transactions.map((item, index) => {
+                                sumQty = item.totalQuantity;
+                                return (
+                                    <tr key={index}>
+                                        <td>{index+1}</td> 
+                                        <td>{item.invoiceNumber}</td>
+                                        <td style={{fontWeight: 'bold', color: item.quantity > 0 ? 'green' : 'red'}} >{item.quantity}</td>
+                                        <td>{new Date(item.dateOfTransaction).toDateString()}</td>
+                                    </tr>
+                                )
+                            }) : <tr><td colSpan="6" style={{textAlign: "center"}}>No Data Found</td></tr>
+                        }
+                        {
+                            transactions && transactions.length > 0
+                            ? <tr>
+                                <td></td>
+                                <td></td>
+                                <td>{sumQty}</td>
+                                <td></td>
+                            </tr>
+                            : <tr></tr>
+                        }
+                    </tbody>
+                </Table>
+          </Container>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={props.onHide}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+}
+
 
 const ProductsPage = (props) => {
     const [products, setProducts] = useState([])
+    const [modalShow, setModalShow] = useState(false);
+    const [productData, setProductData] = useState({})
     useEffect(() => {
         const fetchProducts = async () => {
             const response = await axios.get('/api/products')
@@ -37,6 +100,12 @@ const ProductsPage = (props) => {
             history.push(`/products/${productId}`)
             return <EditProductsPage productId={productId} />
         })
+    }
+
+    const handleTransactionDisplay = (productId) => {
+        const [product] = products.filter(prdt => prdt._id === productId)
+        setProductData(product)
+        setModalShow(true);
     }
 
     const handleProductDelete = (productId) => {
@@ -93,10 +162,12 @@ const ProductsPage = (props) => {
                     <thead>
                     <tr>
                         <th>#</th>
+                        <th>Product UID</th>
                         <th>Item Name</th>
                         <th>Quantity</th>
-                        <th>Price Per Item</th>
+                        <th>Date Of Recieve</th>
                         <th>Total Amount</th>
+                        <th>History</th>
                         {
                             props.auth.isAuthenticated 
                             ? <th colSpan="2" style={{textAlign: "center"}}>Edit</th>
@@ -108,15 +179,19 @@ const ProductsPage = (props) => {
                         {
                             products && products.length > 0
                             ? products.map((item, index) => {
-                                sumQty += item.quantity
-                                sumPrice += (item.price * item.quantity)
+                                sumQty += item.totalQuantity;
+                                sumPrice += (item.price * item.totalQuantity)
                                 return (
                                     <tr key={index}>
                                         <td>{index+1}</td> 
+                                        <td>{item.productUID}</td>
                                         <td>{item.title}</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{item.price}</td>
-                                        <td>{item.price * item.quantity}</td>
+                                        <td>{item.totalQuantity}</td>
+                                        <td>{new Date(item.dateOfRecieve).toDateString()}</td>
+                                        <td>{item.price * item.totalQuantity}</td>
+                                        <td style={{textAlign: 'center'}}>
+                                            <FaFileAlt cursor="pointer" onClick={() => handleTransactionDisplay(item._id)} />
+                                        </td>
                                         {
                                             props.auth.isAuthenticated
                                             ? <>
@@ -138,12 +213,13 @@ const ProductsPage = (props) => {
                             ? <tr>
                                 <td></td>
                                 <td></td>
+                                <td></td>
                                 <td>{sumQty}</td>
                                 <td></td>
                                 <td>{sumPrice}</td>
                                 {
                                     props.auth.isAuthenticated
-                                    ? <td colSpan="2"></td>
+                                    ? <td colSpan="3"></td>
                                     : <></>
                                 }
                             </tr>
@@ -152,6 +228,8 @@ const ProductsPage = (props) => {
                     </tbody>
                 </Table>
             </Container>
+        
+            <MydModalWithGrid show={modalShow} transactionData={productData} onHide={() => setModalShow(false)} />
         </div>
     )
 }

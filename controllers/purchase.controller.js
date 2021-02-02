@@ -1,12 +1,12 @@
 const Purchase = require('../models/purchase.model.js');
+const Products = require('../models/product.model.js');
 
 // Create and Save a new Purchase
 exports.create = (req, res) => {
     const data = req.body && req.body.data ? req.body.data : req.body
     // Validate the request
     const {
-        productName,
-        quantity,
+        productItems,
         purchasesPrice,
         dateOfPurchase,
         dateOfInvoice,
@@ -15,15 +15,14 @@ exports.create = (req, res) => {
         customerContact,
         totalBill
     } = data
-    if (!productName || !quantity || !purchasesPrice || !dateOfPurchase || !dateOfInvoice || !invoiceNumber || !customerName || !customerContact || !totalBill) {
+    if (!productItems || !purchasesPrice || !dateOfPurchase || !dateOfInvoice || !invoiceNumber || !customerName || !customerContact || !totalBill) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
         })
     }
 
     const purchases = new Purchase({
-        productName,
-        quantity,
+        productItems,
         purchasesPrice,
         dateOfPurchase,
         dateOfInvoice,
@@ -33,15 +32,66 @@ exports.create = (req, res) => {
         totalBill
     })
 
-    purchases.save()
-        .then(data => {
-            res.send(data)
-        }).catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while registering the purchase."
-            })
-        })
+    
 
+    purchases.productItems.forEach(async (product) => {
+        const demoProduct = await Products.findOne(
+            {productUID: product.productId}
+        )
+
+        if (demoProduct) {
+            const trans = demoProduct.transactions;
+            const {_id, title, productUID, totalQuantity, price, dateOfRecieve, dateOfInvoice, vendorName} = demoProduct
+            trans.push({
+                invoiceNumber: invoiceNumber,
+                quantity: product.quantity,
+                dateOfTransaction: dateOfInvoice
+            })
+            const sumQty = Number(totalQuantity) + Number(product.quantity)
+            Products.findByIdAndUpdate(_id,
+                {
+                    _id,
+                    title,
+                    productUID,
+                    price,
+                    totalQuantity: sumQty,
+                    dateOfRecieve,
+                    dateOfInvoice,
+                    transactions: trans,
+                    vendorName
+            }).then(product => console.log(`Updated existing Product - ${product}`))
+            .catch(err => res.status(500).send(`Some error occured while updating product - ${err}`))
+        } else {
+            console.log('New Product need to be added')
+            const newProduct = {
+                productUID: product.productId,
+                title: product.productName,
+                totalQuantity: product.quantity,
+                price: product.price,
+                transactions: [{
+                    invoiceNumber: invoiceNumber,
+                    quantity: product.quantity,
+                    dateOfTransaction: dateOfInvoice
+                }],
+                dateOfRecieve: dateOfPurchase,
+                dateOfInvoice,
+                vendorName: customerName
+            }
+
+            Products.insertMany(newProduct)
+            .then(product => console.log(`Added new Product`))
+            .catch(err => res.status(500).send(`Some error occured while adding new product - ${err}`))
+        }
+    })
+
+    purchases.save()
+    .then(data => {
+        res.send(data)
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message || "Some error occurred while registering the purchase."
+        })
+    })
 }
 
 // Retrieve and find all Purchases
@@ -82,8 +132,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     // Validate the request
     const {
-        productName,
-        quantity,
+        productItems,
         purchasesPrice,
         dateOfPurchase,
         dateOfInvoice,
@@ -92,7 +141,7 @@ exports.update = (req, res) => {
         customerContact,
         totalBill
     } = req.body.data
-    if (!productName || !quantity || !purchasesPrice || !dateOfPurchase || !dateOfInvoice || !invoiceNumber || !customerName || !customerContact || !totalBill) {
+    if (!productItems || !purchasesPrice || !dateOfPurchase || !dateOfInvoice || !invoiceNumber || !customerName || !customerContact || !totalBill) {
         return res.status(400).send({
             "message": "Please fill in all the fields"
         })
@@ -100,8 +149,7 @@ exports.update = (req, res) => {
 
     // Find product and update it with the request body
     Purchase.findByIdAndUpdate(req.params.purchaseId, {
-            productName,
-            quantity,
+            productItems,
             purchasesPrice,
             dateOfPurchase,
             dateOfInvoice,
@@ -141,6 +189,57 @@ exports.delete = (req, res) => {
                     message: "Purchase not found with id " + req.params.purchaseId
                 });
             }
+
+            purchase.productItems.forEach(async product => {
+                const demoProduct = await Products.findOne(
+                    {productUID: product.productId}
+                )
+        
+                if (demoProduct) {
+                    const trans = demoProduct.transactions.filter(tr => tr.invoiceNumber !== purchase.invoiceNumber);
+                    const {_id, title, productUID, totalQuantity, price, dateOfRecieve, dateOfInvoice, vendorName} = demoProduct
+                    const sumQty = Number(totalQuantity) - Number(product.quantity)
+                    if (trans.length <= 0) {
+                        Products.findByIdAndDelete(_id)
+                        .then(product => console.log(`Product deleted`))
+                        .catch(err => res.status(500).send(`Some error occured while deleting product - ${err}`))
+                    } else {
+                        Products.findByIdAndUpdate(_id,
+                            {
+                                _id,
+                                title,
+                                productUID,
+                                price,
+                                totalQuantity: sumQty,
+                                dateOfRecieve,
+                                dateOfInvoice,
+                                transactions: trans,
+                                vendorName
+                        }).then(product => console.log(`Updated existing Product`))
+                        .catch(err => res.status(500).send(`Some error occured while updating product - ${err}`))
+                    }
+                } else {
+                    // console.log('New Product need to be added')
+                    // const newProduct = {
+                    //     productUID: product.productId,
+                    //     title: product.productName,
+                    //     totalQuantity: product.quantity,
+                    //     price: product.price,
+                    //     transactions: [{
+                    //         invoiceNumber: invoiceNumber,
+                    //         quantity: product.quantity
+                    //     }],
+                    //     dateOfRecieve: dateOfPurchase,
+                    //     dateOfInvoice,
+                    //     vendorName: customerName
+                    // }
+        
+                    // Products.insertMany(newProduct)
+                    // .then(product => console.log(`Added new Product - ${product}`))
+                    // .catch(err => res.status(500).send(`Some error occured while adding new product - ${err}`))
+                }
+            })
+
             res.send({
                 message: "Purchase deleted successfully!"
             });
