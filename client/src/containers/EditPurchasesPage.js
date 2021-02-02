@@ -43,7 +43,7 @@ const EditPurchasesPage = () => {
         .then(() => {
             store.addNotification({
                 title: "Purchase Updated",
-                message: purchase.title + " has been successfully updated.",
+                message: purchase.invoiceNumber + " has been successfully updated.",
                 type: "success",
                 insert: "top",
                 container: "top-right",
@@ -87,17 +87,44 @@ const EditPurchasesPage = () => {
                     borderRadius: 10,
                     border: '1px solid gray'
                 }}>
-                    <Form.Row>
-                        <Form.Group as={Col} controlId="itemName">
-                            <Form.Label>Product Name</Form.Label>
-                            <Form.Control name="title" onChange={handleFormChange} type="text" value={purchase.productName} placeholder="Enter Item Name" />
-                        </Form.Group>
-                        
-                        <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control name="quantity" value={purchase.quantity} onChange={handleFormChange} type="number" min="0" placeholder="Enter Product Quantity" />
-                        </Form.Group>
-                    </Form.Row>
+                    {
+                        purchase.productItems 
+                        ? purchase.productItems.map((product, index) => {
+                            return (
+                                <div style={{border: '1px solid grey', padding: 10, marginBottom: 20, borderRadius: 10}} id="purchaseItem">
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <h3>Product {index+1}</h3>
+                                        </Form.Group>
+                                    </Form.Row>
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Product ID</Form.Label>
+                                            <Form.Control readOnly name="productId" onChange={handleFormChange} type="text" value={product.productId} placeholder="Enter Product Name" />
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Product Name</Form.Label>
+                                            <Form.Control readOnly name="title" onChange={handleFormChange} type="text" value={product.productName} placeholder="Enter Item Name" />
+                                        </Form.Group>
+                                    </Form.Row>
+                                    
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Quantity</Form.Label>
+                                            <Form.Control readOnly name="quantity" value={product.quantity} onChange={handleFormChange} type="number" min="0" placeholder="Enter Product Quantity" />
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Product Price</Form.Label>
+                                            <Form.Control readOnly name="price" value={product.price} onChange={handleFormChange} type="text" placeholder="Enter Product Name" />
+                                        </Form.Group>
+                                    </Form.Row>
+                                </div>
+                            )
+                        })
+                        : <h1>No Product Found</h1>
+                    }
                     
                     <Form.Row>
                         <Form.Group as={Col} controlId="formGridAddress1">

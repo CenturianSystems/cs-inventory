@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import Axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaPlus, FaTrash } from 'react-icons/fa'
 import axios from 'axios'
 import { store } from 'react-notifications-component';
 import PropTypes from 'prop-types';
@@ -16,8 +16,14 @@ import 'react-day-picker/lib/style.css';
 import DayPicker from 'react-day-picker'
 
 const initialData = Object.freeze({
-    productName: "",
-    quantity: 0,
+    productItems: [
+        {
+            productId: "",
+            productName: "",
+            quantity: 0,
+            price: 0
+        }
+    ],
     purchasesPrice: 4000,
     dateOfPurchase: Date.now(),
     dateOfInvoice: Date.now(),
@@ -54,14 +60,74 @@ const AddPurchasesPage = (props) => {
         })
     }
 
+    const addPurchaseRow = (e) => {
+        const newProductItem = {
+            productId: "",
+            productName: "",
+            quantity: 0,
+            price: 0,
+        };
+        const newItemsArray = formData.productItems
+        newItemsArray.push(newProductItem)
+        setFormData({
+            ...formData,
+            productItems: newItemsArray
+        })
+    }
+
+    const deletePurchaseRow = (index) => {
+        const newItemsArray = formData.productItems
+        newItemsArray.splice(index, 1)
+        setFormData({
+            ...formData,
+            productItems: newItemsArray
+        })
+    }
+
+    const handleProductItemChange = (event, index) => {
+        event.preventDefault();
+        const itemsArray = formData.productItems;
+        const item = itemsArray[index];
+        const name = event.target.name;
+        const value = event.target.value;
+        itemsArray[index] = {
+            ...item,
+            [name]: value
+        };
+        setFormData({
+            ...formData,
+            productItems: itemsArray 
+        })
+    }
+
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        formData.totalBill = formData.purchasesPrice * formData.quantity
+        formData.totalBill = formData.purchasesPrice
+        let existingProducts = [];
+        formData.productItems.forEach((item, index) => {
+            existingProducts = products.filter(prdt => prdt.productUID === item.productId)
+            console.log(existingProducts, 'Existing Products')
+
+            existingProducts.map(product => {
+                if (product.productUID === item.productId) {
+                    console.log(product, Number(product.totalQuantity))
+                    product.transactions.push({
+                        invoiceNumber: formData.invoiceNumber,
+                        quantity: Number(formData.productItems[index].quantity),
+                        dateOfTransaction: formData.dateOfInvoice
+                    })
+                    console.log(item, formData.productItems[index].quantity, product)
+                }
+                return null;
+            })
+        })
+
+        console.log(formData, 'FORMDATA')
         Axios.post('/api/purchases', { data: formData })
         .then(() => {
             store.addNotification({
                 title: "Purchase Added",
-                message: formData.title + " added successfully to the inventory.",
+                message: formData.invoiceNumber + " added successfully to the inventory.",
                 type: "success",
                 insert: "top",
                 container: "top-right",
@@ -105,17 +171,86 @@ const AddPurchasesPage = (props) => {
                     borderRadius: 10,
                     border: '1px solid gray'
                 }}>
-                    <Form.Row>
-                        <Form.Group as={Col} controlId="itemName">
-                            <Form.Label>Product Name</Form.Label>
-                            <Form.Control name="productName" onChange={handleFormChange} type="text" placeholder="Enter Product Name" />
-                        </Form.Group>
+                    {
+                        formData && formData.productItems 
+                        ? formData.productItems.map(
+                            (product, index) => {
+                                return (
+                                    <div style={{border: '1px solid grey', padding: 10, marginBottom: 20, borderRadius: 10}} id="purchaseItem">
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                                <h3>New Product</h3>
+                                            </Form.Group>
+                                            <Button style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, marginRight: 10}} onClick={addPurchaseRow}>
+                                                <FaPlus />
+                                            </Button>
+                                            <Button variant="danger" style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32, display: formData.productItems.length > 1 ? 'block' : 'none'}} onClick={() => { console.log(product, index); deletePurchaseRow(index)}}>
+                                                <FaTrash />
+                                            </Button>
+                                        </Form.Row>
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                                <Form.Label>Product ID</Form.Label>
+                                                <Form.Control name="productId" onChange={(e) => handleProductItemChange(e, index)} type="text" placeholder="Enter Product UID" />
+                                            </Form.Group>
+
+                                            <Form.Group as={Col}>
+                                                <Form.Label>Product Name</Form.Label>
+                                                <Form.Control name="productName" onChange={(e) => handleProductItemChange(e, index)} type="text" placeholder="Enter Product Name" />
+                                            </Form.Group>
+                                        </Form.Row>
+                                        
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                                <Form.Label>Quantity</Form.Label>
+                                                <Form.Control name="quantity" onChange={(e) => handleProductItemChange(e, index)} value={products.filter(item => item.title === formData.productName).quantity} type="number" min="0" placeholder="Enter Product Quantity" />
+                                            </Form.Group>
+
+                                            <Form.Group as={Col}>
+                                                <Form.Label>Product Price</Form.Label>
+                                                <Form.Control name="price" onChange={(e) => handleProductItemChange(e, index)} type="text" placeholder="Enter Product Name" />
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </div>
+                                )
+                            }
+                        )
+                        : <h1>No Products</h1>
+                    }
+                    <div style={{border: '1px solid grey', padding: 10, marginBottom: 20, borderRadius: 10}} className="placeholder-component" id="purchaseItem-demo">
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                                <h3>New Product</h3>
+                            </Form.Group>
+                            <Button style={{float: 'right', height: `calc(1.5em + .75rem + 2px)`, marginBottom: 32}} onClick={addPurchaseRow}>
+                                <FaPlus />
+                            </Button>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                                <Form.Label>Product ID</Form.Label>
+                                <Form.Control name="productId" onChange={handleFormChange} type="text" placeholder="Enter Product UID" />
+                            </Form.Group>
+
+                            <Form.Group as={Col}>
+                                <Form.Label>Product Name</Form.Label>
+                                <Form.Control name="productName" onChange={handleFormChange} type="text" placeholder="Enter Product Name" />
+                            </Form.Group>
+                        </Form.Row>
                         
-                        <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control name="quantity" onChange={handleFormChange} value={products.filter(item => item.title === formData.productName).quantity} type="number" min="0" placeholder="Enter Product Quantity" />
-                        </Form.Group>
-                    </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col}>
+                                <Form.Label>Quantity</Form.Label>
+                                <Form.Control name="quantity" onChange={handleFormChange} value={products.filter(item => item.title === formData.productName).quantity} type="number" min="0" placeholder="Enter Product Quantity" />
+                            </Form.Group>
+
+                            <Form.Group as={Col}>
+                                <Form.Label>Product Price</Form.Label>
+                                <Form.Control name="price" onChange={handleFormChange} type="text" placeholder="Enter Product Name" />
+                            </Form.Group>
+                        </Form.Row>
+                    </div>
+                    <div id="demo"></div>
                     
                     <Form.Row>
                         <Form.Group as={Col} controlId="formGridAddress1">
