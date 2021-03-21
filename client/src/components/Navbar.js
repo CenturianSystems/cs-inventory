@@ -41,7 +41,7 @@ function MyNavbar(props) {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Home</Nav.Link>
-                        <Nav.Link href="/products">Products</Nav.Link>
+                        <Nav.Link href="/products">Inventory</Nav.Link>
                         <Nav.Link disabled={!props.auth.isAuthenticated} href="/sales">Sales</Nav.Link>
                         <Nav.Link disabled={!props.auth.isAuthenticated} href="/purchases">Purchase</Nav.Link>
                     </Nav>

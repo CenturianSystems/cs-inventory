@@ -1,18 +1,27 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const SalesSchema = mongoose.Schema({
-    productName: String,
-    quantity: Number,
+const newSaleItem = {
+  productId: String,
+  productName: String,
+  quantity: Number,
+  salesPrice: Number,
+  typeOfEntry: String,
+};
+
+const SalesSchema = mongoose.Schema(
+  {
+    saleItems: [newSaleItem],
     invoiceNumber: String,
-    salesPrice: Number,
     dateOfSale: Date,
     dateOfInvoice: Date,
     paymentRecieved: Boolean,
     customerName: String,
     customerContact: String,
-    totalBill: String
-}, {
-    timeStamps: true
-});
+    totalBill: String,
+  },
+  {
+    timeStamps: true,
+  }
+);
 
-module.exports = mongoose.model('Sale', SalesSchema);
+module.exports = mongoose.model("Sale", SalesSchema);
