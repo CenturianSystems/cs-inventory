@@ -19,7 +19,7 @@ const EditProductsPage = () => {
   const [transDate, setTransDateChange] = useState(new Date());
   useEffect(() => {
     const fetchProductInfo = async () => {
-      Axios.get(`/api/${history.location.pathname}`).then((res) => {
+      Axios.get(`/api${history.location.pathname}`).then((res) => {
         setProduct(res.data);
       });
     };
