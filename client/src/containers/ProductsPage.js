@@ -120,6 +120,10 @@ const ProductsPage = (props) => {
   let sumQty = 0;
   let sumPrice = 0;
 
+  products.sort(
+    (a, b) => new Date(a.dateOfRecieve) - new Date(b.dateOfRecieve)
+  );
+
   const handleProductEdit = (productId) => {
     Axios.get(`/api/products/${productId}`).then((res) => {
       history.push(`/products/${productId}`);
@@ -230,7 +234,7 @@ const ProductsPage = (props) => {
                         "DD/MM/YYYY"
                       )}
                     </td>
-                    <td>{item.price * item.totalQuantity}</td>
+                    <td>{(item.price * item.totalQuantity).toFixed(2)}</td>
                     <td style={{ textAlign: "center" }}>
                       <FaFileAlt
                         cursor="pointer"
@@ -274,7 +278,7 @@ const ProductsPage = (props) => {
                 <td></td>
                 <td>{sumQty}</td>
                 <td></td>
-                <td>{sumPrice}</td>
+                <td>{sumPrice.toFixed(2)}</td>
                 {props.auth.isAuthenticated ? <td colSpan="3"></td> : <></>}
               </tr>
             ) : (
