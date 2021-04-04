@@ -114,7 +114,7 @@ const EditProductsPage = () => {
       .then(() => {
         store.addNotification({
           title: "Product Updated",
-          message: product.title + " has been successfully updated.",
+          message: product.productUID + " has been successfully updated.",
           type: "success",
           insert: "top",
           container: "top-right",
@@ -125,10 +125,24 @@ const EditProductsPage = () => {
             onScreen: true,
           },
         });
+        // <Notification itemID={product.productUID} type="success" error="" />;
         history.push("/products");
       })
       .catch((e) => {
         console.log(e);
+        store.addNotification({
+          title: "Product Not Added",
+          message: `An error occured while adding ${product.productUID} to the inventory. Please check and try again. ${e}`,
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animate__animated", "animate__fadeIn"],
+          animationOut: ["animate__animated", "animate__fadeOut"],
+          dismiss: {
+            duration: 5000,
+            onScreen: true,
+          },
+        });
       });
   };
 
