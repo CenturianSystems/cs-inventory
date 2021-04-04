@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import "react-day-picker/lib/style.css";
 import DayPicker from "react-day-picker";
+import DatePicker from "react-date-picker";
 
 const initialData = Object.freeze({
   title: "",
@@ -34,6 +35,7 @@ const initialData = Object.freeze({
 
 const AddProductsPage = (props) => {
   const [formData, setFormData] = useState(initialData);
+  const [transDate, setTransDateChange] = useState(new Date());
   const today = Date.now();
   const history = useHistory();
 
@@ -89,6 +91,22 @@ const AddProductsPage = (props) => {
     setFormData({
       ...formData,
       [name]: value,
+    });
+  };
+
+  const handleTransactionDateChange = (value, index) => {
+    const transactionArray = formData.transactions;
+    const item = transactionArray[index];
+    transactionArray[index] = {
+      ...item,
+      dateOfTransaction: value,
+    };
+    setTransDateChange({
+      transDate: value,
+    });
+    setFormData({
+      ...formData,
+      transactions: transactionArray,
     });
   };
 
@@ -175,76 +193,6 @@ const AddProductsPage = (props) => {
               />
             </Form.Group>
           </Form.Row>
-
-          {formData && formData.transactions ? (
-            formData.transactions.map((transaction, index) => {
-              return (
-                <div
-                  style={{
-                    border: "1px solid grey",
-                    padding: 10,
-                    marginBottom: 20,
-                    borderRadius: 10,
-                  }}
-                >
-                  <Form.Row>
-                    <Form.Group as={Col}>
-                      <h3>New Transaction</h3>
-                    </Form.Group>
-                    <Button
-                      style={{
-                        float: "right",
-                        height: `calc(1.5em + .75rem + 2px)`,
-                        marginBottom: 32,
-                        marginRight: 10,
-                      }}
-                      onClick={addTransactionRow}
-                    >
-                      <FaPlus />
-                    </Button>
-                    <Button
-                      variant="danger"
-                      style={{
-                        float: "right",
-                        height: `calc(1.5em + .75rem + 2px)`,
-                        marginBottom: 32,
-                        display:
-                          formData.transactions.length > 1 ? "block" : "none",
-                      }}
-                      onClick={() => deleteTransactionRow(index)}
-                    >
-                      <FaTrash />
-                    </Button>
-                  </Form.Row>
-
-                  <Form.Row>
-                    <Form.Group as={Col}>
-                      <Form.Label>Quantity</Form.Label>
-                      <Form.Control
-                        name="quantity"
-                        onChange={(e) => handleTransactionChange(e, index)}
-                        type="number"
-                        onScroll={() => {}}
-                        min="0"
-                        placeholder="Enter Item Quantity"
-                      />
-                    </Form.Group>
-
-                    <Form.Group as={Col}>
-                      <Form.Label>Invoice Number</Form.Label>
-                      <Form.Control
-                        name="invoiceNumber"
-                        onChange={(e) => handleTransactionChange(e, index)}
-                        placeholder="Enter the Invoice Number"
-                      />
-                    </Form.Group>
-                  </Form.Row>
-                </div>
-              );
-            })
-          ) : (
-            <h1>No Transactions</h1>
-          )}
 
           <Form.Row>
             <Form.Group as={Col} controlId="formGridCity">
@@ -338,6 +286,103 @@ const AddProductsPage = (props) => {
               />
             </Form.Group>
           </Form.Row>
+
+          {formData && formData.transactions ? (
+            formData.transactions.map((transaction, index) => {
+              return (
+                <div
+                  style={{
+                    border: "1px solid grey",
+                    padding: 10,
+                    marginBottom: 20,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Form.Row>
+                    <Form.Group as={Col}>
+                      <h3>New Transaction</h3>
+                    </Form.Group>
+                    <Button
+                      style={{
+                        float: "right",
+                        height: `calc(1.5em + .75rem + 2px)`,
+                        marginBottom: 32,
+                        marginRight: 10,
+                      }}
+                      onClick={addTransactionRow}
+                    >
+                      <FaPlus />
+                    </Button>
+                    <Button
+                      variant="danger"
+                      style={{
+                        float: "right",
+                        height: `calc(1.5em + .75rem + 2px)`,
+                        marginBottom: 32,
+                        display:
+                          formData.transactions.length > 1 ? "block" : "none",
+                      }}
+                      onClick={() => deleteTransactionRow(index)}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </Form.Row>
+
+                  <Form.Row>
+                    <Form.Group as={Col}>
+                      <Form.Label>Quantity</Form.Label>
+                      <Form.Control
+                        name="quantity"
+                        onChange={(e) => handleTransactionChange(e, index)}
+                        type="number"
+                        onScroll={() => {}}
+                        min="0"
+                        placeholder="Enter Item Quantity"
+                      />
+                    </Form.Group>
+
+                    <Form.Group as={Col}>
+                      <Form.Label>Invoice Number</Form.Label>
+                      <Form.Control
+                        name="invoiceNumber"
+                        onChange={(e) => handleTransactionChange(e, index)}
+                        placeholder="Enter the Invoice Number"
+                      />
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group
+                      as={Col}
+                      style={{ textAlign: "center", margin: "0 auto" }}
+                    >
+                      <Form.Label>Date Of Transaction</Form.Label>
+                      <div>
+                        <DatePicker
+                          onChange={(value) =>
+                            handleTransactionDateChange(value, index)
+                          }
+                          value={
+                            new Date(transaction.dateOfTransaction) || transDate
+                          }
+                        />
+                      </div>
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label>Type Of Entry</Form.Label>
+                      <Form.Control
+                        name="typeOfEntry"
+                        value={transaction.typeOfEntry}
+                        onChange={(e) => handleTransactionChange(e, index)}
+                        placeholder="Enter the type of entry"
+                      />
+                    </Form.Group>
+                  </Form.Row>
+                </div>
+              );
+            })
+          ) : (
+            <h1>No Transactions</h1>
+          )}
 
           <Button variant="primary" type="submit">
             Submit
