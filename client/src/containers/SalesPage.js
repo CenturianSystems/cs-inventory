@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Container from "react-bootstrap/Container";
-import Table from "react-bootstrap/Table";
 import axios from "axios";
 import "./container.css";
 import Button from "react-bootstrap/esm/Button";
-import { FaPlus, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import Axios from "axios";
 import { confirmAlert } from "react-confirm-alert";
 import EditSalesPage from "./EditSalesPage.js";
@@ -13,7 +12,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { store } from "react-notifications-component";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import moment from "moment";
+import TableData from "../components/Sales/TableData";
 
 const SalesPage = (props) => {
   const [sales, setSales] = useState([]);
@@ -32,9 +31,11 @@ const SalesPage = (props) => {
     }
   }, [props, history]);
 
-  // let sumQty = 0;
-  let sumPrice = 0;
+  // Sort the sales based on Invoice Date
+  sales.sort((a, b) => new Date(a.dateOfInvoice) - new Date(b.dateOfInvoice));
 
+  // Todo - Admin only access
+  // Edit a sale
   const handleSalesEdit = (saleId) => {
     Axios.get(`/api/sales/${saleId}`).then((res) => {
       history.push(`/sales/${saleId}`);
@@ -42,6 +43,7 @@ const SalesPage = (props) => {
     });
   };
 
+  // Todo - Admin only Access
   // Delete a sale
   const handleSalesDelete = (saleId) => {
     const [delSale] = sales.filter((sale) => sale._id === saleId);
@@ -98,75 +100,11 @@ const SalesPage = (props) => {
           {" "}
           <FaPlus style={{ paddingBottom: 2 }} /> Add New Sale
         </Button>
-        <Table striped responsive bordered hover>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Invoice Number</th>
-              <th>Date Of Invoice</th>
-              <th>Customer Name</th>
-              <th>Payment Recieved</th>
-              <th>Total Amount</th>
-              <th colSpan="2" style={{ textAlign: "center" }}>
-                Edit
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sales && sales.length > 0 ? (
-              sales.map((item, index) => {
-                sumPrice += Number(item.totalBill);
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.invoiceNumber}</td>
-                    <td>
-                      {moment(new Date(item.dateOfInvoice)).format(
-                        "DD/MM/YYYY"
-                      )}
-                    </td>
-                    <td>{item.customerName}</td>
-                    <td>{item.paymentRecieved ? "Yes" : "No"}</td>
-                    <td>{item.totalBill}</td>
-                    <td>
-                      <FaEdit
-                        color="green"
-                        cursor="pointer"
-                        onClick={() => handleSalesEdit(item._id)}
-                      />
-                    </td>
-                    <td>
-                      <FaTrashAlt
-                        color="red"
-                        cursor="pointer"
-                        onClick={() => handleSalesDelete(item._id)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center" }}>
-                  No Data Found
-                </td>
-              </tr>
-            )}
-            {sales && sales.length > 0 ? (
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{sumPrice}</td>
-                <td colSpan="2"></td>
-              </tr>
-            ) : (
-              <tr></tr>
-            )}
-          </tbody>
-        </Table>
+        <TableData
+          sales={sales}
+          handleEdit={handleSalesEdit}
+          handleDelete={handleSalesDelete}
+        />
       </Container>
     </div>
   );

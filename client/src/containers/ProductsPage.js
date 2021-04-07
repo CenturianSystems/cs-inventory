@@ -15,7 +15,7 @@ import { store } from "react-notifications-component";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
-import ProductDataTable from "../components/ProductDataTable";
+import TableData from "../components/Inventory/TableData";
 
 function MydModalWithGrid(props) {
   const { transactionData } = props;
@@ -107,19 +107,20 @@ const ProductsPage = (props) => {
   const [products, setProducts] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [productData, setProductData] = useState({});
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await axios.get("/api/products");
-
-      setProducts(response.data);
-    };
-
-    fetchProducts();
-  }, []);
-
   const history = useHistory();
-  let sumQty = 0;
-  let sumPrice = 0;
+  useEffect(() => {
+    if (props.auth.isAuthenticated) {
+      const fetchProducts = async () => {
+        const response = await axios.get("/api/products");
+
+        setProducts(response.data);
+      };
+
+      fetchProducts();
+    } else {
+      history.push("/login");
+    }
+  }, [history, props.auth.isAuthenticated]);
 
   products.sort(
     (a, b) => new Date(a.dateOfRecieve) - new Date(b.dateOfRecieve)
@@ -196,15 +197,12 @@ const ProductsPage = (props) => {
         ) : (
           <></>
         )}
-
-        <ProductDataTable
+        <TableData
           products={products}
           isAuthenticated={props.auth.isAuthenticated}
-          sumQty={sumQty}
-          sumPrice={sumPrice}
-          handleProductDelete={handleProductDelete}
-          handleProductEdit={handleProductEdit}
-          handleTransactionDisplay={handleTransactionDisplay}
+          transactionDisplay={handleTransactionDisplay}
+          handleEdit={handleProductEdit}
+          handleDelete={handleProductDelete}
         />
       </Container>
 
