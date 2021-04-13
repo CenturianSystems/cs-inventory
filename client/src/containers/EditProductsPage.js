@@ -106,7 +106,7 @@ const EditProductsPage = () => {
           totalQty -= Number(item.quantity);
         }
       } else {
-        totalQty += Number(item.quantity);
+        totalQty += 0;
       }
     });
     product.totalQuantity = totalQty;

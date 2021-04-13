@@ -52,7 +52,7 @@ function MydModalWithGrid(props) {
                       sumQty -= item.quantity;
                     }
                   } else {
-                    sumQty += item.quantity;
+                    sumQty = sumQty + 0;
                   }
                   return (
                     <tr key={index}>
@@ -62,7 +62,11 @@ function MydModalWithGrid(props) {
                         style={{
                           fontWeight: "bold",
                           color:
-                            item.typeOfEntry === "purchase" ? "green" : "red",
+                            item.typeOfEntry === "purchase"
+                              ? "green"
+                              : item.typeOfEntry === "sale"
+                              ? "red"
+                              : "grey",
                         }}
                       >
                         {item.quantity}

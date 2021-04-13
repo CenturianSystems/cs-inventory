@@ -16,25 +16,24 @@ import { Helmet } from "react-helmet";
 import "react-day-picker/lib/style.css";
 import DayPicker from "react-day-picker";
 
-const initialData = Object.freeze({
-  saleItems: [
-    {
-      productId: "",
-      productName: "",
-      quantity: 0,
-      salesPrice: 0,
-      typeOfEntry: "sale",
-    },
-  ],
-  dateOfSale: Date.now(),
-  dateOfInvoice: Date.now(),
-  invoiceNumber: "",
-  customerName: "",
-  customerContact: "",
-  paymentRecieved: false,
-});
-
 const AddSalesPage = (props) => {
+  const initialData = Object.freeze({
+    saleItems: [
+      {
+        productId: "",
+        productName: "",
+        quantity: 0,
+        salesPrice: 0,
+        typeOfEntry: "sale",
+      },
+    ],
+    dateOfSale: Date.now(),
+    dateOfInvoice: Date.now(),
+    invoiceNumber: "",
+    customerName: "",
+    customerContact: "",
+    paymentRecieved: false,
+  });
   const [formData, setFormData] = useState(initialData);
   const [products, setProducts] = useState([]);
   const [tempQtyData, setTempQtyData] = useState([]);
@@ -87,7 +86,8 @@ const AddSalesPage = (props) => {
       .then(() => {
         store.addNotification({
           title: "Sale Added",
-          message: formData.title + " added successfully to the inventory.",
+          message:
+            formData.invoiceNumber + " added successfully to the inventory.",
           type: "success",
           insert: "top",
           container: "top-right",
@@ -122,6 +122,7 @@ const AddSalesPage = (props) => {
       productName: "",
       quantity: 0,
       salesPrice: 0,
+      typeOfEntry: "sale",
     };
     const newItemsArray = formData.saleItems;
     newItemsArray.push(newSaleItem);
@@ -163,7 +164,7 @@ const AddSalesPage = (props) => {
     itemsArray[index] = {
       ...item,
       productName: value,
-      productId: e.productId,
+      productId: e ? e.productId : "",
     };
     setFormData({
       ...formData,
@@ -171,10 +172,14 @@ const AddSalesPage = (props) => {
     });
 
     let qtyData = [...tempQtyData];
-    qtyData.push({
-      name: value,
-      qty: e.avalQty,
-    });
+    if (value && e && e.avalQty) {
+      qtyData.push({
+        name: value,
+        qty: e ? e.avalQty : "",
+      });
+    } else {
+      qtyData.pop();
+    }
 
     setTempQtyData(qtyData);
   };
