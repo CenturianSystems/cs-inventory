@@ -107,7 +107,6 @@ exports.update = (req, res) => {
   if (
     !title ||
     !productUID ||
-    !totalQuantity ||
     !price ||
     !dateOfRecieve ||
     !dateOfInvoice ||
