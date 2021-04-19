@@ -48,7 +48,7 @@ const SalesPage = (props) => {
   const handleSalesDelete = (saleId) => {
     const [delSale] = sales.filter((sale) => sale._id === saleId);
     confirmAlert({
-      title: `Delete ${delSale.productName}`,
+      title: `Delete ${delSale.invoiceNumber}`,
       message:
         "Are you sure you want to delete this ? This action is irreversable.",
       buttons: [
@@ -60,7 +60,7 @@ const SalesPage = (props) => {
                 store.addNotification({
                   title: "Sale Deleted",
                   message:
-                    delSale.productName + " has been successfully deleted.",
+                    delSale.invoiceNumber + " has been successfully deleted.",
                   type: "success",
                   insert: "top",
                   container: "top-right",
