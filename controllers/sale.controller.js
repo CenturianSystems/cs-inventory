@@ -230,8 +230,7 @@ exports.delete = (req, res) => {
             dateOfInvoice,
             vendorName,
           } = demoProduct;
-          const sumQty = Number(totalQuantity) + Number(product.quantity) * -1;
-          console.log(sumQty, "SUM");
+          const sumQty = Number(totalQuantity) + Number(product.quantity);
           if (trans.length <= 0) {
             Products.findByIdAndDelete(_id)
               .then((product) => console.log(`Product deleted`, product))
