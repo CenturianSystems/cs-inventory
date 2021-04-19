@@ -33,7 +33,13 @@ function GlobalFilter({
   }, 200);
 
   return (
-    <Form style={{ marginBottom: 20 }} inline>
+    <Form
+      style={{ marginBottom: 20 }}
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+      inline
+    >
       <Form.Label>Search</Form.Label>
       <Form.Control
         type="text"
